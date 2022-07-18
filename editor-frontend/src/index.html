@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QUBeditotron3000</title>
+
+<script type="text/javascript">
+
+let commacount = "commacount";
+let wordcount = "wordcount";
+let palindromecount = "palindromecount";
+let charcount = "charcount";
+let vowelcount = "vowelcount";
+let averagewordlength = "averagewordlength";
+
+
+function loadFile()
+{
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            proxyLinks = this.response.split("\n");;
+            console.log(proxyLinks[1]);
+        }
+    };
+    xhttp.open("GET",'proxylinks.txt',false);
+    xhttp.send();
+}
+
+
+function Recall(reference)
+{
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var j = JSON.parse(this.response);
+            if (j.error == false) {
+                document.getElementById('content').value = j.string;
+	            document.getElementById('outputError').value = "Recall Success";
+            } else {
+                document.getElementById('outputError').value = j.string;
+            }
+        }
+    };
+    try {
+        let url = "http://database.40231992.qpc.hal.davecutting.uk/" + reference;
+        xhttp.open("GET",url,false);
+        xhttp.send();
+    } catch {
+        console.log("Error with request.")
+    }
+}
+
+
+function Save(reference, text)
+{
+    let xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            var j = JSON.parse(this.response);
+            if (j.error == false) {
+	            document.getElementById('outputError').value = "Save Success";
+                if (reference = "genUnique") {
+                    document.getElementById('saveRecall').value = j.reference;
+                    document.getElementById('output').value = "Reference: " + j.reference;
+                }
+            } else {
+                document.getElementById('outputError').value = j.string;
+            }
+        }
+    };
+    try {
+        if (reference.length < 1) {
+            reference = "genUnique"
+        }
+        let url = "http://database.40231992.qpc.hal.davecutting.uk/write/" + reference + "/" + text;
+        xhttp.open("GET",url,false); 
+        xhttp.send();
+    } catch {
+        console.log("Error with request.")
+    }
+}
+
+
+function MakeRequest(func)
+{
+    loadFile();
+	let returned = false;
+	let answer = "Error";
+	let message = "An unknown error occured";
+	for (let i = 0; i < proxyLinks.length; i++) {
+		if (returned == true) {
+			continue;
+		}
+		let xhttp = new XMLHttpRequest();
+		xhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var j = JSON.parse(this.response);
+				if (j.error == false) {
+					returned = true;
+					answer = j.answer;
+					message = j.string;
+                } else {
+                    answer = j.answer;
+					message = j.string;
+                }
+            } else if (this.status == 400) {
+                answer = "Error 400";
+                message = "Bad Request";
+            } else if (this.status == 404) {
+                answer = "Error 404";
+                message = "Service not found";
+            } else if (this.status == 502) {
+                answer = "Error 502";
+                message = "Bad Gateway";
+            } else if (this.status == 503) {
+                answer = "Error 503";
+                message = "Service Unavailable";
+            }
+		};
+		try {
+			let url = proxyLinks[i] + func + "/?text=" + encodeURI(document.getElementById('content').value);
+			xhttp.open("GET",url,false); // `false` makes the request synchronous
+			xhttp.send();
+		} catch {
+			console.log("Error with request.")
+		}
+	}
+	document.getElementById('output').value = answer;
+	document.getElementById('outputError').value = message;
+}
+
+
+</script>
+
+<style type="text/css">
+body  {
+    font-size: 150%;
+    font-family: monospace;
+}
+
+#logo
+{
+    font-family: Calibri, sans-serif;
+    font-weight: lighter;
+    color: #505050;
+    margin: 0.5em;
+}
+
+#editor
+{
+    text-align: center;
+    margin-top: 1em;
+}
+
+#output {
+    font-size: 100%;
+    padding: 0.2em;
+    margin: 0.2em;
+    font-family: monospace;
+    letter-spacing: 0.1em;
+}
+
+#outputError {
+    font-size: 100%;
+    padding: 0.2em;
+    margin: 0.2em;
+    font-family: monospace;
+    letter-spacing: 0.1em;
+}
+
+#content {
+    font-size: 100%;
+    padding: 0.2em;
+    margin: 0.2em;
+    font-family: monospace;
+    letter-spacing: 0.1em;
+}
+
+.operation {
+    border: solid #d0d0d0 1px;
+    background-color: #f0f0f0;
+    padding: 1.5em;
+    margin: 1em;
+    width: 14em;
+}
+</style>
+
+</head>
+<body>
+<div id="editor">
+    <div id="logo">
+        Liam's QUBeditotron3000
+    </div>
+    <div>
+        <textarea rows="5" cols="40" id="content">It was the best of cloud, it was the worst of cloud...</textarea>
+    </div>
+    <div>
+		<h2>Answer</h2>
+        <input type="text" id="output" readonly="1" value="" />
+    </div>
+	<div>
+		<h2>Message</h2>
+        <input type="text" id="outputError" readonly="1" value="" />
+    </div>
+    <div>
+        <button class="operation" onclick="MakeRequest(wordcount);">Word Count</button>
+        <button class="operation" onclick="MakeRequest(charcount);">Character Count</button>
+    </div>
+    <div>
+        <button class="operation" onclick="MakeRequest(commacount);">Comma Count</button>
+        <button class="operation" onclick="MakeRequest(palindromecount);">Palindrome Count</button>
+    </div>
+    <div>
+        <button class="operation" onclick="MakeRequest(averagewordlength);">Avg Word Length</button>
+        <button class="operation" onclick="MakeRequest(vowelcount);">Vowel Count</button>
+    </div>
+	<div>
+		<h2>Save/Recall</h2>
+        <textarea rows="1" cols="15" id="saveRecall"></textarea>
+        <button class="operation" onclick="Save(document.getElementById('saveRecall').value, document.getElementById('content').value);">Save</button>
+        <button class="operation" onclick="Recall(document.getElementById('saveRecall').value);">Recall</button>
+    </div>
+    
+</div>
+</body>
+
+<!--- Make requests synchronous --->
+<!--- https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Synchronous_and_Asynchronous_Requests --->
+
+</html>

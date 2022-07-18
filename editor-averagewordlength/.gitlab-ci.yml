@@ -1,0 +1,9 @@
+image: ruby:latest
+
+before_script:
+  - bundle install
+
+test:
+  script:
+      - ruby test.rb
+      - ruby test2.rb

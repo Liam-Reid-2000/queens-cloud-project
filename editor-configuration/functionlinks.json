@@ -1,0 +1,46 @@
+{
+  "Functions":[
+	{
+		"key": "averagewordlength",
+		"name": "Average Word Length",
+		"link1": "averagewordlength",
+		"link2": "averagewordlength2",
+		"link3": "averagewordlength3"
+	},
+	{
+		"key": "charcount",
+		"name": "Character Count",
+		"link1": "charcount",
+		"link2": "charcount2",
+		"link3": "charcount3"
+	},
+	{
+		"key": "commacount",
+		"name": "Comma Count",
+		"link1": "commacount",
+		"link2": "commacount2",
+		"link3": "commacount3"
+	},
+	{
+		"key": "palindromecount",
+		"name": "Palindrome Count",
+		"link1": "palindromecount",
+		"link2": "palindromecount2",
+		"link3": "palindromecount3"
+	},
+	{
+		"key": "vowelcount",
+		"name": "Vowel Count",
+		"link1": "vowelcount",
+		"link2": "vowelcount2",
+		"link3": "vowelcount3"
+	},
+	{
+		"key": "wordcount",
+		"name": "Word Count",
+		"link1": "wordcount",
+		"link2": "wordcount2",
+		"link3": "wordcount3"
+	}
+  ]
+}
